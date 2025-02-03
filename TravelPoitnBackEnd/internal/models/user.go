@@ -9,6 +9,6 @@ type User struct {
 	Password string `json:"password"`
 	PhoneNumber string `json:"phoneNumber"`
 	IsOwner bool `json:"isOwner"`
-	CalendarId string `json:"calendarId"`
-	AddressId string `json:"addressId"`
+	CalendarId int `json:"calendarId"`
+	AddressId int `json:"addressId"`
 }
