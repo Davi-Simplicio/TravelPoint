@@ -56,4 +56,5 @@ func PostAddress(c * gin.Context){
 		fmt.Println(err)
 	}
 	c.IndentedJSON(http.StatusCreated, newAddress)
+	db.CloseConnection(con)
 }

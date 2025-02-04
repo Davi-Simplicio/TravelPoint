@@ -18,7 +18,7 @@ func GetCalendar(c *gin.Context){
 	var calendars []models.Calendar
 	for calendar.Next(){
 		var calendarModel models.Calendar
-		err := calendar.Scan(&calendarModel.ID, &calendarModel.Date, &calendarModel.Availability)
+		err := calendar.Scan(&calendarModel.ID, &calendarModel.Name, &calendarModel.Status)
 		if err != nil {
 			fmt.Println(err)
 			continue
@@ -34,7 +34,7 @@ func GetCalendarById(c *gin.Context){
 	fmt.Println(id)
 	con := db.OpenConnection()
 	var calendar models.Calendar
-	if err := con.QueryRow("SELECT * FROM calendar WHERE id = $1", id).Scan(&calendar.ID, &calendar.Date, &calendar.Availability); err != nil {
+	if err := con.QueryRow("SELECT * FROM calendar WHERE id = $1", id).Scan(&calendar.ID, &calendar.Name, &calendar.Status); err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"message": "Calendar not found"})
 		return
 	}
@@ -44,15 +44,16 @@ func GetCalendarById(c *gin.Context){
 
 func PostCalendar(c *gin.Context){
 	var newCalendar models.Calendar
-	sqlStatement := `INSERT INTO calendar (date, availability) VALUES ($1, $2) RETURNING id`
+	sqlStatement := `INSERT INTO calendar (name, status) VALUES ($1, $2) RETURNING id`
 	con := db.OpenConnection()
 	err := c.BindJSON(&newCalendar)
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, err = con.Exec(sqlStatement, newCalendar.Date, newCalendar.Availability)
+	_, err = con.Exec(sqlStatement, newCalendar.Name, newCalendar.Status)
 	if err != nil {
 		fmt.Println(err)
 	}
 	c.IndentedJSON(http.StatusCreated, newCalendar)
+	db.CloseConnection(con)
 }

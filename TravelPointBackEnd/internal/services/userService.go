@@ -56,4 +56,5 @@ func PostUers(c *gin.Context){
 		fmt.Println(err)
 	}
 	c.IndentedJSON(http.StatusCreated, newUser)
+	db.CloseConnection(con)
 }

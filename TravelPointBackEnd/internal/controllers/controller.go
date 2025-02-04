@@ -20,6 +20,11 @@ func Controller(){
 	router.GET("/calendar/:id", services.GetCalendarById)
 	router.POST("/calendar", services.PostCalendar)
 
+	router.GET("/date", services.GetDate)
+	router.GET("/date/:id", services.GetDateById)
+	router.GET("/date/calendar/:calendarId", services.GetDateByCalendarId)
+	router.POST("/date", services.PostDate)
+
 	router.Run("localhost:8080")
 }
 

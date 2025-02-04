@@ -2,7 +2,7 @@ CREATE DATABASE travel_point IF NOT EXISTS;
 \c travel_point;
 
 CREATE TABLE address (
-    ID VARCHAR(255) SERIAL PRIMARY KEY,
+    ID SERIAL PRIMARY KEY,
     AddressLine VARCHAR(255),
     Longitude DECIMAL(10, 6),
     Latitude DECIMAL(10, 6),
@@ -13,13 +13,21 @@ CREATE TABLE address (
 );
 
 CREATE TABLE calendar (
-    ID VARCHAR(255) SERIAL PRIMARY KEY,
-    Date DATE,
-    Availability BOOLEAN
+    ID SERIAL PRIMARY KEY,
+    Name VARCHAR(255),
+    Status BOOLEAN
 );
 
+CREATE TABLE date (
+    ID SERIAL PRIMARY KEY,
+    Date DATE,
+    CalendarId SERIAL,
+    HasEvent BOOLEAN,
+    FOREIGN KEY (CalendarId) REFERENCES calendar(ID) ON DELETE CASCADE
+)
+
 CREATE TABLE users (
-    ID VARCHAR(255) SERIAL PRIMARY KEY,
+    ID SERIAL PRIMARY KEY,
     Name VARCHAR(255),
     LastName VARCHAR(255),
     BirthDate DATE,
@@ -27,8 +35,8 @@ CREATE TABLE users (
     Password VARCHAR(255),
     PhoneNumber VARCHAR(255),
     IsOwner BOOLEAN,
-    CalendarId VARCHAR(255),
-    AddressId VARCHAR(255),
+    CalendarId SERIAL,
+    AddressId SERIAL,
     FOREIGN KEY (CalendarId) REFERENCES calendar(ID) ON DELETE SET NULL,
     FOREIGN KEY (AddressId) REFERENCES address(ID) ON DELETE SET NULL
 );
