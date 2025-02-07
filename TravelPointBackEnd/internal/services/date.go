@@ -48,8 +48,8 @@ func PostDate(c *gin.Context){
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, err = con.Exec(sqlStatement, newDate.Date, newDate.CalendarId, newDate.HasEvent)
-	if err != nil {
+	dateErr := con.QueryRow(sqlStatement, newDate.Date, newDate.CalendarId, newDate.HasEvent).Scan(&newDate.ID)
+	if dateErr != nil {
 		fmt.Println(err)
 	}
 	c.IndentedJSON(http.StatusCreated, newDate)

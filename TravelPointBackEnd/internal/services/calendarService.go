@@ -42,18 +42,13 @@ func GetCalendarById(c *gin.Context){
 	db.CloseConnection(con)
 }
 
-func PostCalendar(c *gin.Context){
-	var newCalendar models.Calendar
+func PostCalendar(newCalendar models.Calendar)(models.Calendar, error){
 	sqlStatement := `INSERT INTO calendar (name, status) VALUES ($1, $2) RETURNING id`
 	con := db.OpenConnection()
-	err := c.BindJSON(&newCalendar)
-	if err != nil {
-		fmt.Println(err)
+	calendarErr := con.QueryRow(sqlStatement, newCalendar.Name, newCalendar.Status).Scan(&newCalendar.ID)
+	if calendarErr != nil {
+		fmt.Println(calendarErr)
 	}
-	_, err = con.Exec(sqlStatement, newCalendar.Name, newCalendar.Status)
-	if err != nil {
-		fmt.Println(err)
-	}
-	c.IndentedJSON(http.StatusCreated, newCalendar)
 	db.CloseConnection(con)
+	return newCalendar, calendarErr
 }

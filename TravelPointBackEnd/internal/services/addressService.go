@@ -51,10 +51,12 @@ func PostAddress(c * gin.Context){
 	if err != nil {
 		fmt.Println(err)
 	}	
-	_, err = con.Exec(sqlStatement, newAddress.AddressLine, newAddress.Latitude, newAddress.Longitude, newAddress.City, newAddress.State, newAddress.Country, newAddress.PostalCode)
-	if err != nil {
-		fmt.Println(err)
+	AddressErr := con.QueryRow(sqlStatement, newAddress.AddressLine, newAddress.Latitude, newAddress.Longitude, newAddress.City, newAddress.State, newAddress.Country, newAddress.PostalCode).Scan(&newAddress.ID)
+
+	if AddressErr != nil {
+		fmt.Println(AddressErr)
 	}
+	fmt.Println(newAddress.ID)
 	c.IndentedJSON(http.StatusCreated, newAddress)
 	db.CloseConnection(con)
 }

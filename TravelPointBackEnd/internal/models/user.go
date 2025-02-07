@@ -12,3 +12,8 @@ type User struct {
 	CalendarId int `json:"calendarId"`
 	AddressId int `json:"addressId"`
 }
+
+type UserLogin struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
