@@ -8,12 +8,14 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var code string
+var codeStore = make(map[string]string)
+var codeMutex = sync.Mutex{}
 
 func GetUsers(c *gin.Context) {
 	var con = db.OpenConnection()
@@ -69,7 +71,7 @@ func PostUers(c *gin.Context) {
 		Name:   calendarName,
 		Status: true,
 	}
-	userCalendar,err = PostCalendar(userCalendar)
+	userCalendar, err = PostCalendar(userCalendar)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -100,7 +102,7 @@ func Login(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	isValid, err := repository.AuthenticateUser(userLogin.Email, userLogin.Password) 
+	isValid, err := repository.AuthenticateUser(userLogin.Email, userLogin.Password)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -108,7 +110,12 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, dbUser)
+	token, err := utils.GenerateJWTToken(dbUser.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to genarate token"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, gin.H{"token": token})
 	db.CloseConnection(con)
 }
 
@@ -155,13 +162,18 @@ func ChangePassword(c *gin.Context) {
 	db.CloseConnection(con)
 }
 
-func SendCodeByEmail(c *gin.Context){
+func SendCodeByEmail(c *gin.Context) {
 	var userEmail models.UserEmail
 	err := c.BindJSON(&userEmail)
 	if err != nil {
 		fmt.Println(err)
 	}
-	code = utils.SendCode(userEmail.Email)
+	codeMutex.Lock()
+	codeStore[userEmail.Email], err = utils.SendCode(userEmail.Email)
+	if err != nil {
+		fmt.Println(err)
+	}
+	codeMutex.Unlock()
 }
 
 func AuthenticateCode(c *gin.Context) {
@@ -170,10 +182,13 @@ func AuthenticateCode(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	if utils.AuthenticateCode(code, userCode.Code) {
+	print(codeStore[userCode.Email])
+	if utils.AuthenticateCode(codeStore[userCode.Email], userCode.Code) {
 		c.JSON(http.StatusOK, gin.H{"message": "Code is valid"})
+		codeMutex.Lock()
+		delete(codeStore, userCode.Email)
+		codeMutex.Unlock()
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "Code is invalid"})
 	}
 }
-

@@ -1,23 +1,23 @@
 package db
 
 import (
-    "database/sql"
-    "fmt"
-  
-    _ "github.com/lib/pq"
-  )
+	"database/sql"
+	"fmt"
 
-  const (
-		host = "localhost"
-	port = 5433
-	user = "postgres"
-	password = "Lau27439635vi@"
-	dbname = "travel_point"
+	_ "github.com/lib/pq"
 )
 
-func OpenConnection() *sql.DB{
+const (
+	host     = "localhost"
+	port     = 5433
+	user     = "postgres"
+	password = "Lau27439635vi@"
+	dbname   = "travel_point"
+)
+
+func OpenConnection() *sql.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable", 
+		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {

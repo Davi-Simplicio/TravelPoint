@@ -1,8 +1,8 @@
 package models
 
 type Chat struct {
-	ID string `json:"id"`
-	OwnerId string `json:"ownerId"`
+	ID       string `json:"id"`
+	OwnerId  string `json:"ownerId"`
 	ClientId string `json:"clientId"`
-	Status string `json:"status"`
+	Status   string `json:"status"`
 }

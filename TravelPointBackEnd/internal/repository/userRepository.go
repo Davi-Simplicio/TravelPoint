@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-func AuthenticateUser(email, password string) (bool, error){
+func AuthenticateUser(email, password string) (bool, error) {
 	var hashedPassword string
 
 	con := db.OpenConnection()
@@ -20,7 +20,7 @@ func AuthenticateUser(email, password string) (bool, error){
 	return isValid, err
 }
 
-func GetUSerByEmail(email string) (models.User,error) {
+func GetUSerByEmail(email string) (models.User, error) {
 	var user models.User
 	con := db.OpenConnection()
 	err := con.QueryRow("SELECT * FROM users WHERE email = $1", email).Scan(&user.ID, &user.Name, &user.LastName, &user.BirthDate, &user.Email, &user.Password, &user.PhoneNumber, &user.IsOwner, &user.CalendarId, &user.AddressId)

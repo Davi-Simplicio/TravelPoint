@@ -1,12 +1,12 @@
 package controllers
 
 import (
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 import "TravelPointbackend/internal/services"
 
-func Controller(){
+func Controller() {
 	router := gin.Default()
 	router.GET("/users", services.GetUsers)
 	router.GET("/users/:id", services.GetUserById)
@@ -16,6 +16,7 @@ func Controller(){
 	router.GET("/address", services.GetAddress)
 	router.GET("/address/:id", services.GetAddressById)
 	router.POST("/address", services.PostAddress)
+	router.POST("/address/cep", services.GetAddressByCep)
 
 	router.GET("/calendar", services.GetCalendar)
 	router.GET("/calendar/:id", services.GetCalendarById)
@@ -30,6 +31,3 @@ func Controller(){
 
 	router.Run("localhost:8080")
 }
-
-
-

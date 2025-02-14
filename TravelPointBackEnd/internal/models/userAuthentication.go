@@ -5,5 +5,6 @@ type UserEmail struct {
 }
 
 type Code struct {
-	Code string `json:"code"`
+	Code  string `json:"code"`
+	Email string `json:"email"`
 }

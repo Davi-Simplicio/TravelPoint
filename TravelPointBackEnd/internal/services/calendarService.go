@@ -9,14 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetCalendar(c *gin.Context){
+func GetCalendar(c *gin.Context) {
 	var con = db.OpenConnection()
 	var calendar, err = con.Query("SELECT * FROM calendar")
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 	}
 	var calendars []models.Calendar
-	for calendar.Next(){
+	for calendar.Next() {
 		var calendarModel models.Calendar
 		err := calendar.Scan(&calendarModel.ID, &calendarModel.Name, &calendarModel.Status)
 		if err != nil {
@@ -29,7 +29,7 @@ func GetCalendar(c *gin.Context){
 	db.CloseConnection(con)
 }
 
-func GetCalendarById(c *gin.Context){
+func GetCalendarById(c *gin.Context) {
 	id := c.Param("id")
 	fmt.Println(id)
 	con := db.OpenConnection()
@@ -42,7 +42,7 @@ func GetCalendarById(c *gin.Context){
 	db.CloseConnection(con)
 }
 
-func PostCalendar(newCalendar models.Calendar)(models.Calendar, error){
+func PostCalendar(newCalendar models.Calendar) (models.Calendar, error) {
 	sqlStatement := `INSERT INTO calendar (name, status) VALUES ($1, $2) RETURNING id`
 	con := db.OpenConnection()
 	calendarErr := con.QueryRow(sqlStatement, newCalendar.Name, newCalendar.Status).Scan(&newCalendar.ID)
