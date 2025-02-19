@@ -1,0 +1,42 @@
+services:
+  # ✅ Golang Backend
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/travelpoint
+
+  # ✅ Python Email Microservice
+  email_service:
+    build: ./email_service
+    ports:
+      - "5000:5000"
+    depends_on:
+      - backend
+
+  # ✅ Next.js Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  # ✅ PostgreSQL Database
+  db:
+    image: postgres:16
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: travelpoint
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

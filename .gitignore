@@ -1,0 +1,16 @@
+# Ignore OAuth credentials & tokens
+client_secret.json
+token.json
+
+# Ignore Python virtual environments
+venv/
+.env
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Docker files if using
+docker-compose.override.yml

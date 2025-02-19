@@ -1,6 +1,8 @@
 package main
 
-import "TravelPointbackend/internal/controllers"
+import (
+	"TravelPointbackend/internal/controllers"
+)
 
 
 func main() {
