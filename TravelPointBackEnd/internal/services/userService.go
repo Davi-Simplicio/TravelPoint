@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -115,8 +116,32 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to genarate token"})
 		return
 	}
+
+	c.SetCookie("token", token, 3600, "/", "", true, true)
+
 	c.IndentedJSON(http.StatusOK, gin.H{"token": token})
 	db.CloseConnection(con)
+}
+
+func RetrieveToken(c *gin.Context) {
+	token, err := c.Cookie("token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	tokenDecoded, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		return []byte("secret"), nil
+	})
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, gin.H{"token": tokenDecoded})
+}
+
+func Logout(c *gin.Context) {
+	c.SetCookie("token", "", -1, "/", "", true, true)
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Logged out"})
 }
 
 func ChangePassword(c *gin.Context) {

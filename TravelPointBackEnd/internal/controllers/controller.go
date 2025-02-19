@@ -12,11 +12,13 @@ func Controller() {
 	router.GET("/users/:id", services.GetUserById)
 	router.POST("/users", services.PostUers)
 	router.POST("/login", services.Login)
+	router.GET("/logout", services.Logout)
+	router.GET("/token", services.RetrieveToken)
 
 	router.GET("/address", services.GetAddress)
 	router.GET("/address/:id", services.GetAddressById)
+	router.GET("/address/cep/:cep", services.GetAddressByCep)
 	router.POST("/address", services.PostAddress)
-	router.POST("/address/cep", services.GetAddressByCep)
 
 	router.GET("/calendar", services.GetCalendar)
 	router.GET("/calendar/:id", services.GetCalendarById)

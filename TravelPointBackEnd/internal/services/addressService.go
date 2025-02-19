@@ -21,7 +21,7 @@ func GetAddress(c *gin.Context) {
 
 	for address.Next() {
 		var addressModel models.Address
-		err := address.Scan(&addressModel.ID, &addressModel.AddressLine, &addressModel.Latitude, &addressModel.Longitude, &addressModel.City, &addressModel.State, &addressModel.Country, &addressModel.PostalCode)
+		err := address.Scan(&addressModel.ID,  &addressModel.Longitude, &addressModel.Latitude, &addressModel.City, &addressModel.State, &addressModel.Country, &addressModel.Cep, &addressModel.Neighborhood, &addressModel.Street, &addressModel.Number)
 		if err != nil {
 			fmt.Println(err)
 			continue
@@ -36,7 +36,7 @@ func GetAddressById(c *gin.Context) {
 	var con = db.OpenConnection()
 	id := c.Param("id")
 	var address models.Address
-	if err := con.QueryRow("SELECT * FROM address WHERE id = $1", id).Scan(&address.ID, &address.AddressLine, &address.Latitude, &address.Longitude, &address.City, &address.State, &address.Country, &address.PostalCode); err != nil {
+	if err := con.QueryRow("SELECT * FROM address WHERE id = $1", id).Scan(&address.ID, &address.Longitude, &address.Latitude, &address.City, &address.State, &address.Country, &address.Cep, &address.Neighborhood, &address.Street, &address.Number ); err != nil {
 		fmt.Println(err)
 	}
 	c.IndentedJSON(http.StatusOK, address)
@@ -45,13 +45,13 @@ func GetAddressById(c *gin.Context) {
 
 func PostAddress(c *gin.Context) {
 	var newAddress models.Address
-	sqlStatement := `INSERT INTO address (addressLine, latitude, longitude, city, state, country, postalCode) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`
+	sqlStatement := `INSERT INTO address (longitude, latitude, city, state, country, cep, neighborhood, street, number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`
 	con := db.OpenConnection()
 	err := c.BindJSON(&newAddress)
 	if err != nil {
 		fmt.Println(err)
 	}
-	AddressErr := con.QueryRow(sqlStatement, newAddress.AddressLine, newAddress.Latitude, newAddress.Longitude, newAddress.City, newAddress.State, newAddress.Country, newAddress.PostalCode).Scan(&newAddress.ID)
+	AddressErr := con.QueryRow(sqlStatement,  newAddress.Longitude, newAddress.Latitude, newAddress.City, newAddress.State, newAddress.Country, newAddress.Cep, newAddress.Neighborhood, newAddress.Street, newAddress.Number).Scan(&newAddress.ID)
 
 	if AddressErr != nil {
 		fmt.Println(AddressErr)

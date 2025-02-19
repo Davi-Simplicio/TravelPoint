@@ -3,13 +3,15 @@ CREATE DATABASE travel_point IF NOT EXISTS;
 
 CREATE TABLE address (
     ID SERIAL PRIMARY KEY,
-    AddressLine VARCHAR(255),
     Longitude DECIMAL(10, 6),
     Latitude DECIMAL(10, 6),
     City VARCHAR(255),
     State VARCHAR(50),
     Country VARCHAR(255),
-    PostalCode VARCHAR(255)
+    Cep VARCHAR(255),
+    Neighborhood VARCHAR(255),
+    Street VARCHAR(255),
+    Number VARCHAR(255)
 );
 
 CREATE TABLE calendar (
@@ -24,7 +26,7 @@ CREATE TABLE date (
     CalendarId SERIAL,
     HasEvent BOOLEAN,
     FOREIGN KEY (CalendarId) REFERENCES calendar(ID) ON DELETE CASCADE
-)
+);
 
 CREATE TABLE users (
     ID SERIAL PRIMARY KEY,
