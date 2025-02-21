@@ -91,38 +91,6 @@ func PostUers(c *gin.Context) {
 	db.CloseConnection(con)
 }
 
-func Login(c *gin.Context) {
-	var userLogin models.UserLogin
-	err := c.BindJSON(&userLogin)
-	if err != nil {
-		fmt.Println(err)
-	}
-	con := db.OpenConnection()
-	var dbUser models.User
-	dbUser, err = repository.GetUSerByEmail(userLogin.Email)
-	if err != nil {
-		fmt.Println(err)
-	}
-	isValid, err := repository.AuthenticateUser(userLogin.Email, userLogin.Password)
-	if err != nil {
-		fmt.Println(err)
-	}
-	if !isValid {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
-		return
-	}
-	token, err := utils.GenerateJWTToken(dbUser.ID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to genarate token"})
-		return
-	}
-
-	c.SetCookie("token", token, 3600, "/", "", true, true)
-
-	c.IndentedJSON(http.StatusOK, gin.H{"token": token})
-	db.CloseConnection(con)
-}
-
 func RetrieveToken(c *gin.Context) {
 	token, err := c.Cookie("token")
 	if err != nil {
@@ -137,11 +105,6 @@ func RetrieveToken(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, gin.H{"token": tokenDecoded})
-}
-
-func Logout(c *gin.Context) {
-	c.SetCookie("token", "", -1, "/", "", true, true)
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "Logged out"})
 }
 
 func ChangePassword(c *gin.Context) {
