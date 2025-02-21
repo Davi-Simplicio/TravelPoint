@@ -91,6 +91,10 @@ func PostUers(c *gin.Context) {
 	db.CloseConnection(con)
 }
 
+func PostGoogleUser(c *gin.Context) {
+	utils.GoogleLogin(c)
+}
+
 func RetrieveToken(c *gin.Context) {
 	token, err := c.Cookie("token")
 	if err != nil {

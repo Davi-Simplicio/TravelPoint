@@ -42,3 +42,23 @@ CREATE TABLE users (
     FOREIGN KEY (CalendarId) REFERENCES calendar(ID) ON DELETE SET NULL,
     FOREIGN KEY (AddressId) REFERENCES address(ID) ON DELETE SET NULL
 );
+
+CREATE TABLE googleUsers (
+    ID SERIAL PRIMARY KEY,
+    GoogleId VARCHAR(50) UNIQUE,
+    Name VARCHAR(255),
+    LastName VARCHAR(255),
+    BirthDate DATE,
+    Email VARCHAR(255) UNIQUE,
+    Verified BOOLEAN DEFAULT false,
+    Picture VARCHAR(255),
+    Provider VARCHAR(20) DEFAULT 'google',
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Password VARCHAR(255),
+    PhoneNumber VARCHAR(255),
+    IsOwner BOOLEAN,
+    CalendarId SERIAL,
+    AddressId SERIAL,
+    FOREIGN KEY (CalendarId) REFERENCES calendar(ID) ON DELETE SET NULL,
+    FOREIGN KEY (AddressId) REFERENCES address(ID) ON DELETE SET NULL
+);
